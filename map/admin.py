@@ -16,7 +16,7 @@ class SpeedCameraAdmin(geoadmin.OSMGeoAdmin):
          {'fields': ['road', 'city', 'country', 'postcode', 'state', 'house_number', 'county', 'suburb',
                                                                     'city_district', 'neighbourhood']}),
         ('Way', {'fields': ['ref', 'max_speed']}),
-        ('Geography', {'fields': ['geometry', 'longtitude', 'lattitude']}),
+        ('Geography', {'fields': ['geometry', ('lattitude', 'longtitude')]}),
         ('Open Street Map', {'fields': ['osm_url']}),
         ('Date', {'fields': ['created_date']}),
         ('Other', {'fields': ['note']}),
