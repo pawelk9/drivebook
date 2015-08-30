@@ -5,6 +5,7 @@ from .models import SpeedCamera
 
 class SpeedCameraAdmin(geoadmin.OSMGeoAdmin):
 
+    # Center OSM map to Poland
     default_lon = 2103205
     default_lat = 6877636
     default_zoom = 6
@@ -12,7 +13,8 @@ class SpeedCameraAdmin(geoadmin.OSMGeoAdmin):
     fieldsets = [
         ('Speed device', {'fields': ['type', 'address']}),
         ('Address',
-         {'fields': ['road', 'city', 'country', 'postcode', 'state', 'house_number', 'county', 'suburb']}),
+         {'fields': ['road', 'city', 'country', 'postcode', 'state', 'house_number', 'county', 'suburb',
+                                                                    'city_district', 'neighbourhood']}),
         ('Way', {'fields': ['ref', 'max_speed']}),
         ('Geography', {'fields': ['geometry', 'longtitude', 'lattitude']}),
         ('Open Street Map', {'fields': ['osm_url']}),

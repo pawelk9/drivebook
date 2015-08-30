@@ -34,6 +34,9 @@ class SpeedCamera(models.Model):
     house_number = gis_models.CharField(max_length=300, blank=True, null=True)
     county = gis_models.CharField(max_length=300, blank=True, null=True)
     suburb = gis_models.CharField(max_length=300, blank=True, null=True)
+    neighbourhood = gis_models.CharField(max_length=300, blank=True, null=True)
+    city_district = gis_models.CharField(max_length=300, blank=True, null=True)
+
     osm_url = gis_models.URLField(max_length=300, blank=True, null=True)
 
     geometry = gis_models.PointField(srid=4326, geography=True, blank=True, null=True)
@@ -85,6 +88,12 @@ class SpeedCamera(models.Model):
 
         if 'suburb' in location.raw['address']:
             self.suburb = location.raw['address']['suburb']
+
+        if 'neighbourhood' in location.raw['address']:
+            self.neighbourhood = location.raw['address']['neighbourhood']
+
+        if 'city_district' in location.raw['address']:
+            self.city_district = location.raw['address']['city_district']
 
         if 'osm_id' in location.raw:
             self.ref = osm_xml_parse('http://www.openstreetmap.org/api/0.6/way/' + location.raw['osm_id'], 'ref')
