@@ -3,7 +3,11 @@ from django.contrib.gis import admin as geoadmin
 from .models import SpeedCamera
 
 
-class SpeedCameraAdmin(geoadmin.GeoModelAdmin):
+class SpeedCameraAdmin(geoadmin.OSMGeoAdmin):
+
+    default_lon = 2103205
+    default_lat = 6877636
+    default_zoom = 6
 
     fieldsets = [
         ('Speed device', {'fields': ['type', 'address']}),
