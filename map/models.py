@@ -6,22 +6,19 @@ import xml.etree.ElementTree as ET
 import requests
 
 
-def osm_xml_parse(url):
-
+def osm_xml_parse(url, k):
     r = requests.get(url)
 
     if r.status_code == 200:
         root = ET.fromstring(r.text)
         for tag in root.iter('tag'):
-            if tag.attrib['k'] == 'ref':
+            if tag.attrib['k'] == k:
                 return tag.attrib['v']
     else:
-        return False
+        return None
 
 
 class SpeedCamera(models.Model):
-
-
     TYPES = (
         ('FS', 'Fotoradar stacjonarny'),
         ('FP', 'Fotoradar przenosny')
@@ -37,12 +34,16 @@ class SpeedCamera(models.Model):
     house_number = gis_models.CharField(max_length=300, blank=True, null=True)
     county = gis_models.CharField(max_length=300, blank=True, null=True)
     suburb = gis_models.CharField(max_length=300, blank=True, null=True)
+    osm_url = gis_models.URLField(max_length=300, blank=True, null=True)
 
     geometry = gis_models.PointField(srid=4326, geography=True, blank=True, null=True)
     longtitude = gis_models.CharField(max_length=50, blank=True, null=True)
     lattitude = gis_models.CharField(max_length=50, blank=True, null=True)
 
+    max_speed = gis_models.CharField(max_length=10, blank=True, null=True)
+
     note = gis_models.TextField(blank=True, default='')
+
     created_date = gis_models.DateTimeField(default=timezone.now)
 
     gis = gis_models.GeoManager()
@@ -86,10 +87,12 @@ class SpeedCamera(models.Model):
             self.suburb = location.raw['address']['suburb']
 
         if 'osm_id' in location.raw:
-            self.ref = osm_xml_parse('http://www.openstreetmap.org/api/0.6/way/' + location.raw['osm_id'])
+            self.ref = osm_xml_parse('http://www.openstreetmap.org/api/0.6/way/' + location.raw['osm_id'], 'ref')
+            self.max_speed = osm_xml_parse('http://www.openstreetmap.org/api/0.6/way/' + location.raw['osm_id'],
+                                           'maxspeed')
+            self.osm_url = 'http://www.openstreetmap.org/api/0.6/way/' + location.raw['osm_id']
 
         self.lattitude = lat
         self.longtitude = lon
 
         super(SpeedCamera, self).save()
-
