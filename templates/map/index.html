@@ -10,27 +10,19 @@
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
 
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDqxAws1ARC9yq9wDDiZnPjmDh_EH9-bCA"></script>
-    <script src="{% static "js/map.js" %}"></script>
 
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.css" />
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.js"></script>
+
     <link rel="stylesheet" href="{% static "css/map.css" %}">
-
 
 </head>
 
 <body>
-     <!--[if lt IE 8]>
-     <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
-     <![endif]-->
-    <div id=map></div>
 
-    {% for speed_camera in speed_cameras %}
-        <h1>{{ speed_camera.geometry.x }}</h1>
-    {% endfor %}
+     <div id="map"></div>
 
-     <div id="map-canvas"></div>
-
+    <script src="{% static "js/map.js" %}"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 </body>
 </html>
