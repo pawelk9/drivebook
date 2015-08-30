@@ -2,6 +2,21 @@ from django.db import models
 from django.contrib.gis.db import models as gis_models
 from django.utils import timezone
 from geopy.geocoders import Nominatim
+import xml.etree.ElementTree as ET
+import requests
+
+
+def osm_xml_parse(url):
+
+    r = requests.get(url)
+
+    if r.status_code == 200:
+        root = ET.fromstring(r.text)
+        for tag in root.iter('tag'):
+            if tag.attrib['k'] == 'ref':
+                return tag.attrib['v']
+    else:
+        return False
 
 
 class SpeedCamera(models.Model):
@@ -15,6 +30,7 @@ class SpeedCamera(models.Model):
     address = gis_models.CharField(max_length=300, blank=True, null=True)
     city = gis_models.CharField(max_length=300, blank=True, null=True)
     road = gis_models.CharField(max_length=300, blank=True, null=True)
+    ref = gis_models.CharField(max_length=300, blank=True, null=True)
     country = gis_models.CharField(max_length=300, blank=True, null=True)
     postcode = gis_models.CharField(max_length=300, blank=True, null=True)
     state = gis_models.CharField(max_length=300, blank=True, null=True)
@@ -28,7 +44,6 @@ class SpeedCamera(models.Model):
 
     note = gis_models.TextField(blank=True, default='')
     created_date = gis_models.DateTimeField(default=timezone.now)
-
 
     gis = gis_models.GeoManager()
     objects = models.Manager()
@@ -70,18 +85,11 @@ class SpeedCamera(models.Model):
         if 'suburb' in location.raw['address']:
             self.suburb = location.raw['address']['suburb']
 
+        if 'osm_id' in location.raw:
+            self.ref = osm_xml_parse('http://www.openstreetmap.org/api/0.6/way/' + location.raw['osm_id'])
+
         self.lattitude = lat
         self.longtitude = lon
 
-
         super(SpeedCamera, self).save()
 
-'''
-{'address': {'county': 'Cook County', 'state': 'Illinois', 'suburb': 'Near North Side',
- 'city': 'Chicago', 'country_code': 'us', 'postcode': '60661', 'country': 'United States of America',
-  'neighbourhood': 'Greektown', 'house_number': '703', 'road': 'West Monroe Street'},
-   'place_id': '91429157', 'osm_type': 'way', 'lon': '-87.6443740745258', 'lat': '41.8803483',
-    'licence': 'Data \xa9 OpenStreetMap contributors, ODbL 1.0. http://www.openstreetmap.org/copyright',
-     'display_name': '703, West Monroe Street, Greektown, Near North Side, Chicago, Cook County, Illinois,
-      60661, United States of America', 'osm_id': '156356430'}
-'''
