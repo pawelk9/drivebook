@@ -3,7 +3,6 @@
 <html>
 <head>
     <title>Fotoradary</title>
-
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="description" content="">
@@ -15,14 +14,21 @@
     <script src="http://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.js"></script>
 
     <link rel="stylesheet" href="{% static "css/map.css" %}">
-
 </head>
 
 <body>
 
-     <div id="map"></div>
-
+    <div id="map"></div>
     <script src="{% static "js/map.js" %}"></script>
+    <script>
+    {% for speed_camera in speed_cameras %}
+    var marker = new google.maps.Marker({
+        position: {lat: {{ speed_camera.geometry.y}}, lng: {{ speed_camera.geometry.x}}},
+        map: map,
+        title: '{{ speed_camera.address}}'
+    });
+    {% endfor %}
+    </script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 </body>
 </html>
