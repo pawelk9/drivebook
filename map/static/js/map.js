@@ -2,6 +2,13 @@
 function doNothing() {
 }
 
+function bindInfoWindow(marker, map, infoWindow, html) {
+      google.maps.event.addListener(marker, 'click', function() {
+        infoWindow.setContent(html);
+        infoWindow.open(map, marker);
+      });
+    }
+
 function initialize() {
 
     // Google Maps
@@ -29,6 +36,18 @@ function initialize() {
     };
     var map = new google.maps.Map(document.getElementById('map'),mapOptions);
 
+    var infoWindow = new google.maps.InfoWindow;
+
+    // Marker icons
+    var customIcons = {
+      'FS': {
+        icon: '/static/img/speed_camera_stationary.png'
+      },
+      'FP': {
+        icon: '/static/img/speed_camera_mobile.png'
+      }
+    };
+
     // Open Street Map
     var osm = new google.maps.ImageMapType({
         getTileUrl: function(coord, zoom) {
@@ -46,33 +65,36 @@ function initialize() {
     var xmlhttp = new XMLHttpRequest();
     xmlhttp.onreadystatechange = function() {
         if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-
             var markers = JSON.parse(xmlhttp.responseText);
             for (var i = 0; i < markers.length; i++) {
-                var address = markers[i].fields.address
-                var city = markers[i].fields.city
-                var city_district = markers[i].fields.city_district
-                var county = markers[i].fields.county
-                var created_date = markers[i].fields.created_date
-                var geometry = markers[i].fields.geometry
-                var house_number = markers[i].fields.house_number
-                var lattitude = markers[i].fields.lattitude
-                var longtitude = markers[i].fields.longtitude
-                var max_speed = markers[i].fields.max_speed
-                var neighbourhood = markers[i].fields.neighbourhood
-                var note = markers[i].fields.note
-                var osm_url = markers[i].fields.osm_url
-                var postcode = markers[i].fields.postcode
-                var ref = markers[i].fields.ref
-                var road = markers[i].fields.road
-                var state = markers[i].fields.state
-                var suburb = markers[i].fields.suburb
-                var type = markers[i].fields.type
+                var address = markers[i].fields.address;
+                var city = markers[i].fields.city;
+                var city_district = markers[i].fields.city_district;
+                var county = markers[i].fields.county;
+                var created_date = markers[i].fields.created_date;
+                var geometry = markers[i].fields.geometry;
+                var house_number = markers[i].fields.house_number;
+                var lattitude = markers[i].fields.lattitude;
+                var longtitude = markers[i].fields.longtitude;
+                var max_speed = markers[i].fields.max_speed;
+                var neighbourhood = markers[i].fields.neighbourhood;
+                var note = markers[i].fields.note;
+                var osm_url = markers[i].fields.osm_url;
+                var postcode = markers[i].fields.postcode;
+                var ref = markers[i].fields.ref;
+                var road = markers[i].fields.road;
+                var state = markers[i].fields.state;
+                var suburb = markers[i].fields.suburb;
+                var type = markers[i].fields.type;
+                var icon = customIcons[type];
+                var html = address;
 
                 var marker = new google.maps.Marker({
                     map: map,
-                    position: new google.maps.LatLng(lattitude, longtitude)
+                    position: new google.maps.LatLng(lattitude, longtitude),
+                    icon: icon.icon
                 });
+                bindInfoWindow(marker, map, infoWindow, html);
 
             }
         }
