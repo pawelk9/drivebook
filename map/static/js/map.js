@@ -3,11 +3,11 @@ function doNothing() {
 }
 
 function bindInfoWindow(marker, map, infoWindow, html) {
-      google.maps.event.addListener(marker, 'click', function() {
+    google.maps.event.addListener(marker, 'click', function() {
         infoWindow.setContent(html);
         infoWindow.open(map, marker);
-      });
-    }
+    });
+}
 
 function initialize() {
 
