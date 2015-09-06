@@ -11,12 +11,12 @@ class SpeedCameraAdmin(geoadmin.OSMGeoAdmin):
     default_zoom = 6
 
     fieldsets = [
+        ('Geography', {'fields': ['geometry', ('lattitude', 'longtitude')]}),
         ('Speed device', {'fields': ['type', 'address']}),
         ('Address',
          {'fields': ['road', 'city', 'country', 'postcode', 'state', 'house_number', 'county', 'suburb',
                                                                     'city_district', 'neighbourhood']}),
         ('Way', {'fields': ['ref', 'max_speed']}),
-        ('Geography', {'fields': ['geometry', ('lattitude', 'longtitude')]}),
         ('Open Street Map', {'fields': ['osm_url']}),
         ('Date', {'fields': ['created_date']}),
         ('Other', {'fields': ['note']}),
