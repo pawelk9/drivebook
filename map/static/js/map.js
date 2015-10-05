@@ -1,112 +1,53 @@
-// Do nothing
-function doNothing() {
-}
+$(document).ready(function () {
+    initMap();
+});
 
-function bindInfoWindow(marker, map, infoWindow, html) {
-    google.maps.event.addListener(marker, 'click', function() {
-        infoWindow.setContent(html);
-        infoWindow.open(map, marker);
+// Global variables
+var map;
+
+function initMap() {
+
+    var map = L.map('map').setView([52.2, 19], 7);
+    L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+        attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
+        maxZoom: 18,
+        id: 'pawelk9.cifcs0oy500bxt0lx37ssd3m5',
+        accessToken: 'pk.eyJ1IjoicGF3ZWxrOSIsImEiOiJjaWZjczBwNTUwMGExdWVseXBmdHVnaDE5In0.BS4MuI49zQxh8feq64a2bQ'
+    }).addTo(map);
+
+    // Geolocation
+    map.locate({setView: true, maxZoom: 16});
+
+    // Custom icons
+    var speedDevice = L.icon({
+        iconUrl: '/static/img/speed_camera_stationary.png',
+        iconSize: [32, 26]
     });
-}
 
-function initialize() {
-
-    // Google Maps
-    var mapOptions = {
-        center: new google.maps.LatLng(52.2, 20),
-        zoom: 7,
-        disableDefaultUI: false,
-        scaleControl: false,
-        zoomControl: true,
-        panControl: true,
-        streetViewControl: true,
-        overviewMapControl: true,
-        mapTypeControl: true,
-        mapTypeControlOptions: {
-            mapTypeIds: [
-                google.maps.MapTypeId.ROADMAP,
-                google.maps.MapTypeId.SATELLITE,
-                google.maps.MapTypeId.HYBRID,
-                google.maps.MapTypeId.TERRAIN,
-                'Open Street Map'
-            ],
-            style: google.maps.MapTypeControlStyle.HORIZONTAL_BAR,
-            position: google.maps.ControlPosition.TOP_CENTER
-        }
-    };
-    var map = new google.maps.Map(document.getElementById('map'),mapOptions);
-
-    var infoWindow = new google.maps.InfoWindow;
-
-    // Marker icons
-    var customIcons = {
-      'FS': {
-        icon: '/static/img/speed_camera_stationary.png'
-      },
-      'FP': {
-        icon: '/static/img/speed_camera_mobile.png'
-      }
-    };
-
-    // Open Street Map
-    var osm = new google.maps.ImageMapType({
-        getTileUrl: function(coord, zoom) {
-            return "http://tile.openstreetmap.org/" + zoom + "/" + coord.x + "/" + coord.y + ".png";
-        },
-        tileSize: new google.maps.Size(256, 256),
-        isPng: true,
-        maxZoom: 19,
-        minZoom: 0,
-        name: "Open Street Map"
-    });
-    map.mapTypes.set('Open Street Map', osm);
-
-    // Markers
+    // Add markers
     var xmlhttp = new XMLHttpRequest();
     xmlhttp.onreadystatechange = function() {
+        var marker = [];
         if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+
             var markers = JSON.parse(xmlhttp.responseText);
             for (var i = 0; i < markers.length; i++) {
-                var address = markers[i].fields.address;
-                var city = markers[i].fields.city;
-                var city_district = markers[i].fields.city_district;
-                var county = markers[i].fields.county;
-                var created_date = markers[i].fields.created_date;
-                var geometry = markers[i].fields.geometry;
-                var house_number = markers[i].fields.house_number;
-                var lattitude = markers[i].fields.lattitude;
-                var longtitude = markers[i].fields.longtitude;
-                var max_speed = markers[i].fields.max_speed;
-                var neighbourhood = markers[i].fields.neighbourhood;
-                var note = markers[i].fields.note;
-                var osm_url = markers[i].fields.osm_url;
-                var postcode = markers[i].fields.postcode;
-                var ref = markers[i].fields.ref;
-                var road = markers[i].fields.road;
-                var state = markers[i].fields.state;
-                var suburb = markers[i].fields.suburb;
-                var type = markers[i].fields.type;
-                var icon = customIcons[type];
-                var html = address;
-
-                var marker = new google.maps.Marker({
-                    map: map,
-                    position: new google.maps.LatLng(lattitude, longtitude),
-                    icon: icon.icon
+                marker[i] = new L.marker([markers[i].fields.lattitude, markers[i].fields.longtitude], {
+                name: '<img src="/static/img/speed_camera_header.png" class="img-responsive" alt="Fotoradar">',
+                icon: speedDevice,
+                postcode: markers[i].fields.postcode,
+                type: markers[i].fields.type
                 });
-                bindInfoWindow(marker, map, infoWindow, html);
-
+                marker[i].addTo(map);
+                marker[i].on('click', onClick);
             }
         }
     }
     xmlhttp.open("GET", "/ajax", true);
     xmlhttp.send();
-
 }
 
-google.maps.event.addDomListener(window, 'load', initialize);
-
-
-
-
-
+// Click event
+function onClick(e) {
+    $(".marker-name").html(this.options.name);
+}
