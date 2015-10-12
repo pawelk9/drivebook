@@ -36,7 +36,9 @@ function initMap() {
                 name: '<img src="/static/img/speed_camera_header.png" class="img-responsive" alt="Fotoradar">',
                 icon: speedDevice,
                 postcode: markers[i].fields.postcode,
-                type: markers[i].fields.type
+                type: markers[i].fields.type,
+                lat: markers[i].fields.lattitude,
+                lon: markers[i].fields.longtitude
                 });
                 marker[i].addTo(map);
                 marker[i].on('click', onClick);
@@ -45,9 +47,19 @@ function initMap() {
     }
     xmlhttp.open("GET", "/ajax", true);
     xmlhttp.send();
+
+    $.ajax({
+    url: "http://www.openstreetmap.org/api/0.6/way/261627389/full",
+    dataType: "xml",
+    success: function (xml) {
+        var layer = new L.OSM.DataLayer(xml).addTo(map);
+        map.fitBounds(layer.getBounds());
+    }
+});
 }
 
 // Click event
 function onClick(e) {
     $(".marker-name").html(this.options.name);
+    $("#coords").text(parseFloat(this.options.lat).toFixed(6) + ", " + parseFloat(this.options.lon).toFixed(6));
 }
