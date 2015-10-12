@@ -45,7 +45,7 @@ body {
     overflow-x: hidden;
     overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
     background-color: #f5f5f5;
-    border-right: 1px solid #eee;
+    border-right: 1px solid #ddd;
   }
 }
 
@@ -102,4 +102,17 @@ body {
 .placeholder img {
   display: inline-block;
   border-radius: 50%;
+}
+
+.secondary-nav {
+    border-radius: 0;
+    border: 0;
+    box-shadow: 0 2px 4px 0 rgba(0,0,0,0.16),0 2px 10px 0 rgba(0,0,0,0.12) !important;
+    margin-bottom: 0;
+    z-index: 1;
+}
+
+.row.no-pad > [class*='col-'] {
+  padding-right:0;
+  padding-left:0;
 }
